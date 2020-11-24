@@ -25,7 +25,11 @@ class Follower
   end
 
   def join_cult(cult_instance)
-    BloodOath.new(Time.now.strftime("%F"), self, cult_instance)
+    if self.age < cult_instance.minimum_age
+      "Sorry. The minimum age to join our cult is #{cult_instance.minimum_age}. We're glad to have you in the future!"
+    else 
+      BloodOath.new(Time.now.strftime("%F"), self, cult_instance)
+    end
   end
   
   def self.of_a_certain_age(age)
@@ -45,6 +49,16 @@ class Follower
     self.all.each {|follower| hash[follower] = follower.cults.length}
     ten_follower = hash.sort_by {|follower,count| count}.last(10)
     ten_follower.map {|array| array[0]}
+  end
+
+  #BONUS
+
+  def fellow_cult_members
+    fellows = []
+    self.cults.each do |cult|
+      fellows += cult.followers.reject {|follower| follower == self}.uniq
+    end
+    fellows
   end
 
 end
